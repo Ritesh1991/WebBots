@@ -310,14 +310,11 @@ class InterpalsBot():
             'version':'HTTP/1.1',
             'accept':'text/html;application/xhtml+xml;application/xml;q=0.9,image/webp;*/*;q=0.8',
             'accept-encoding':'gzip, deflate',
-            'accept-language':'pl-PL;pl;q=0.8;en-US;q=0.6;en;q=0.4',
             'content-length':'88',
             'content-type':'application/x-www-form-urlencoded',
-            #'cookie':'resolution=1680x1050; resolution=1680x1050; resolution=1680x1050; __ubic1=MTc0NTE0MTIyODU3MWZhOWU4MDRhZWU2Ljc0NjkwOTg1; fbnl=1; __cfduid=d5d68b1068e3f3e1d47d74406665a7a3d1461710723; interpals_sessid=7ltbgiqpj1q9enb89jt0b5amp2; csrf_cookieV2=3MikEHI1Htg%3D; resolution=1680x1050; __utmt=1; __utma=46363135.695731205.1461710725.1461710725.1461710725.1; __utmb=46363135.2.9.1461710725; __utmc=46363135; __utmz=46363135.1461710725.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); __gads=ID=9299f22b822e0d8f:T=1461710724:S=ALNI_MYo6D4j3po3DcW24Tz-eJitdgqETQ',
             'origin':'https://www.interpals.net',
             'referer':'https://www.interpals.net/index.php',
             'upgrade-insecure-requests':'1',
-            'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36'
         }
         formData=   {
             'username':self.yourInterpalsLogin,
@@ -442,12 +439,10 @@ class InterpalsBot():
             'version':'HTTP/1.1',
             'accept':'application/json, text/javascript, */*; q=0.01',
             'accept-encoding':'gzip, deflate',
-            'accept-language':'pl-PL;pl;q=0.8;en-US;q=0.6;en;q=0.4',
             'content-type':'application/x-www-form-urlencoded; charset=UTF-8',
             'origin':'https://www.interpals.net',
             'referer':None,
             'x-requested-with':'XMLHttpRequest',
-            'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36'
         }
         formData=   {
             'action':'send_message',
