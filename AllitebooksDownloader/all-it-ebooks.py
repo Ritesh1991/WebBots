@@ -73,6 +73,9 @@ class AllItEbooksDownloader():
         return None
     
     def downloadEbook(self,title,url):
+        for ch in ['?',':','*','/','\\']:
+            if ch in title:
+                title=title.replace(ch,'-')
         fullFilePath=os.path.join(self.downloadPath,title+'.pdf')
         if(os.path.isfile(fullFilePath)):
             print(fullFilePath+" already exists")
