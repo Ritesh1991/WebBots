@@ -58,14 +58,14 @@ class AllItEbooksDownloader():
         if html is None:
             return None
         print("-----------searching for title------------")
-        reg= re.compile(r'<h2 class="entry-title"><a href="([\w+://.-]*)" rel="bookmark">([\w+\s*://.-]*)')       
+        reg= re.compile(r'<h2 class="entry-title"><a href="([\w+://.-]*)" rel="bookmark">([\w+\s*://.,-]*)')       
         books= reg.findall(html)
         return books
         
     def _getDownloadLink(self, html):
         if html is None:
             return None
-        reg= re.compile(r'<span class="download-links">\s*<a href="([\s*\w+://.-]*)"\s*target')       
+        reg= re.compile(r'<span class="download-links">\s*<a href="([\s*\w+://.,()-]*)"\s*target')       
         downloadLink= reg.search(html)
         if downloadLink is not None:
             #print(downloadLink.group(1))
@@ -97,6 +97,7 @@ class AllItEbooksDownloader():
                 r=self._makeGetRequestOrException(book[0])
                 if(r.status_code is 200):
                     downloadUrl=self._getDownloadLink(r.text)
+                    #print(book[1] + " --- "+ str(downloadUrl))
                     self.downloadEbook(book[1],downloadUrl)
                                        
 if __name__ == '__main__':
