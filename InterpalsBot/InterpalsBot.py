@@ -3,7 +3,7 @@ import sys
 import requests
 import re
 from bs4 import BeautifulSoup
-
+import html5lib
 
 '''==================== USAGE ===================='''
   # 1.    bot  = InterpalsBot() #creates an bot object
@@ -314,6 +314,7 @@ class InterpalsBot():
             'content-type':'application/x-www-form-urlencoded',
             'origin':'https://www.interpals.net',
             'referer':'https://www.interpals.net/index.php',
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
             'upgrade-insecure-requests':'1',
         }
         formData=   {
@@ -326,7 +327,7 @@ class InterpalsBot():
             print("-----------Creates session ... ---------")
             self.session = requests.Session()
             r=self.session.get(self.interpalsMainUrl,timeout=100)
-            content = BeautifulSoup(r.content, "html.parser")
+            content = BeautifulSoup(r.content, "html5lib")
             csrfToken= content.find(attrs={'name':'csrf-token'})
             formData['csrf_token']=csrfToken["content"]
             rPost=self.makeRequestOrException("POST",url=self.interpalsLoginUrl,**{'data':formData,'headers':reqHeaders})
@@ -360,7 +361,7 @@ class InterpalsBot():
             r = self.session.get(self.interpalsAccountUrl,timeout=10)
             if(r.status_code is not 200):
                 raise requests.exceptions.RequestException(self.interpalsAccountUrl+" 404 ")      
-            if(re.search("/logout.php",r.text)):
+            if(re.search("My Home",r.text)):
                 return True
         return False
 
@@ -369,7 +370,7 @@ class InterpalsBot():
         try:
             print("-----------opening account page------------")
             r=self.makeRequestOrException("GET",url=self.interpalsAccountUrl,timeout=10)  
-            html = BeautifulSoup(r.content, 'html.parser')
+            html = BeautifulSoup(r.content, 'html5lib')
             if self.debugFlag:
                 print(html.encode('utf-8'))
                 with open("contentGET.txt",'wb') as f:
