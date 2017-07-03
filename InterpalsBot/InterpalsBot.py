@@ -289,7 +289,7 @@ class InterpalsBot():
         self.interpalsMainUrl=u"https://www.interpals.net"
         self.interpalsAllUsersUrl=u"https://www.interpals.net/app/search"
         self.interpalsLoginUrl=u"https://www.interpals.net/app/auth/login"
-        self.interpalsAccountUrl=u"https://www.interpals.net/account.php"
+        self.interpalsAccountUrl=u"https://www.interpals.net/app/account"
         
         self.yourInterpalsLogin= self.LOGIN
         self.yourInterpalsPassword= self.PASSWORD
@@ -302,7 +302,7 @@ class InterpalsBot():
     
     
     def createSession(self):
-        reqHeaders= {
+        reqPostHeaders= {
             'host':'www.interpals.net',
             'method':'POST',
             'path':'/app/auth/login',
@@ -313,10 +313,26 @@ class InterpalsBot():
             'content-length':'88',
             'content-type':'application/x-www-form-urlencoded',
             'origin':'https://www.interpals.net',
-            'referer':'https://www.interpals.net/index.php',
+            'referer':'https://www.interpals.net/app',
             'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
             'upgrade-insecure-requests':'1',
         }
+        
+        reqGetHeaders= {
+            'host':'www.interpals.net',
+            'method':'GET',
+            'path':'/',
+            'scheme':'https',
+            'version':'HTTP/1.1',
+            'accept':'text/html;application/xhtml+xml;application/xml;q=0.9,image/webp;*/*;q=0.8',
+            'accept-encoding':'gzip, deflate',
+            'content-type':'application/x-www-form-urlencoded',
+            'origin':'https://www.interpals.net',
+            'referer':'https://www.interpals.net/app',
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
+            'upgrade-insecure-requests':'1',
+        }
+        
         formData=   {
             'username':self.yourInterpalsLogin,
             'auto_login':'1',
@@ -326,11 +342,11 @@ class InterpalsBot():
         try:
             print("-----------Creates session ... ---------")
             self.session = requests.Session()
-            r=self.session.get(self.interpalsMainUrl,timeout=100)
+            r=self.makeRequestOrException("GET",url=self.interpalsMainUrl)
             content = BeautifulSoup(r.content, "html5lib")
             csrfToken= content.find(attrs={'name':'csrf-token'})
             formData['csrf_token']=csrfToken["content"]
-            rPost=self.makeRequestOrException("POST",url=self.interpalsLoginUrl,**{'data':formData,'headers':reqHeaders})
+            rPost=self.makeRequestOrException("POST",url=self.interpalsLoginUrl,**{'data':formData,'headers':reqPostHeaders})
             if self.debugFlag:
                 print(self.session.cookies)
                 with open("contentPOST.txt",'wb') as f:
@@ -432,7 +448,7 @@ class InterpalsBot():
             return
         if len(userName)==0 or userName==None:
             return
-        reqHeaders= {
+        reqPostHeaders= {
             'host':'www.interpals.net',
             'method':'POST',
             'path':'/pm.php',
@@ -462,9 +478,9 @@ class InterpalsBot():
             threadId=re.findall(r'(name="send_thread_id"\s*value="(\d*)")',r.text, re.M)[0][1]
             #print(threadId)
             refUrl="https://www.interpals.net/pm.php?thread_id=%s"%threadId
-            reqHeaders['referer']=refUrl
+            reqPostHeaders['referer']=refUrl
             formData['thread']=threadId
-            rPost=self.makeRequestOrException("POST",url=refUrl,**{'data':formData,'headers':reqHeaders})
+            rPost=self.makeRequestOrException("POST",url=refUrl,**{'data':formData,'headers':reqPostHeaders})
         except requests.exceptions.RequestException as exception:
             print("[ERROR] - Exception occured %s "%exception )
 
@@ -476,7 +492,7 @@ class InterpalsBot():
             return
         if len(userName)==0 or userName==None:
             return
-        reqHeaders= {
+        reqPostHeaders= {
             'host':'www.interpals.net',
             'method':'POST',
             'path':None,
@@ -511,11 +527,11 @@ class InterpalsBot():
             path=path[1]
             #print(path+ ",  pid="+pid)
             refUrl="https://www.interpals.net/photo.php?pid=%s"%pid
-            reqHeaders['referer']=refUrl
-            reqHeaders['path']=path
+            reqPostHeaders['referer']=refUrl
+            reqPostHeaders['path']=path
             formData['pid']=pid
             formData['aid']=aid
-            rPost=self.makeRequestOrException("POST",url=refUrl,**{'data':formData,'headers':reqHeaders})
+            rPost=self.makeRequestOrException("POST",url=refUrl,**{'data':formData,'headers':reqPostHeaders})
         except requests.exceptions.RequestException as exception:
             print("[ERROR] - Exception occured %s "%exception )
             
