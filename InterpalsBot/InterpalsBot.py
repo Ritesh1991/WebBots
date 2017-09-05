@@ -15,8 +15,8 @@ import html5lib
             # SEX= 'F'
             # CONTINENTS= 'NorthAmerica'
             # COUNTRY= ''
-            # LOGIN= u"mymail@gmail.com"  
-            # PASSWORD=u"mypassword"
+            # LOGIN= u"yourmail@gmail.com"  
+            # PASSWORD=u"yourpassword"
         # '''-------------CONFIG-End---------------''' 
   
   # 3.    bot.sendMessage("UserWeirdName","Hi!")          #send message "Hi!" to a user UserWeirdName 
@@ -32,13 +32,13 @@ if PY2:
 class InterpalsBot():
 
     '''CONFIG - You SHALL modify ONLY THIS part'''
-    MIN_AGE= 20
+    MIN_AGE= 26
     MAX_AGE= 30
     SEX= 'F'
     CONTINENTS= 'Europe'
     COUNTRY= ''
-    LOGIN= u"mymail@gmail.com"  
-    PASSWORD=u"mypassword"
+    LOGIN= u"yourmail@gmail.com"  
+    PASSWORD=u"yourpassword"
     '''-------------CONFIG-End---------------''' 
     
     RequestAttributes={
@@ -402,53 +402,53 @@ class InterpalsBot():
                 print("You are not logged on!")
                 return
             print("-----------opening people's page------------")
-            if minAge <16 or minAge>110 or maxAge<16 or maxAge>110:
+            if minAge < 16 or minAge > 110 or maxAge < 16 or maxAge > 110:
                 raise ValueError("Incorrect age value {16-100} allowed")
             if sex not in self.RequestAttributes["SEX"]:
                 raise ValueError("Incorrect sex value {F,M,MF} allowed")
             else:
                sex=self.RequestAttributes["SEX"][sex]
                print(sex)
-            if country !="" and country in self.RequestAttributes["COUNTRY"]:
-               query=self.interpalsAllUsersUrl+"?age1=%d&age2=%d&sex=%s&sort=last_login&countries=%s"%(minAge,maxAge,sex,self.RequestAttributes["COUNTRY"][country])
+            if country != "" and country in self.RequestAttributes["COUNTRY"]:
+               query = self.interpalsAllUsersUrl+"?age1=%d&age2=%d&sex=%s&sort=last_login&countries=%s"%(minAge,maxAge,sex,self.RequestAttributes["COUNTRY"][country])
                print(country)
             else:
                if continent not in self.RequestAttributes["CONTINENT"]:
                    raise ValueError("Incorrect continent value {NA, AS, EU, OC, SA,AF} allowed")
                print(continent)
-               query=self.interpalsAllUsersUrl+"?age1=%d&age2=%d&sex=%s&sort=last_login&continents=%s"%(minAge,maxAge,sex,self.RequestAttributes["CONTINENT"][continent])
-            r=self.makeRequestOrException("GET",url=query,timeout=10)
+               query = self.interpalsAllUsersUrl+"?age1=%d&age2=%d&sex=%s&sort=last_login&continents=%s"%(minAge,maxAge,sex,self.RequestAttributes["CONTINENT"][continent])
+            r = self.makeRequestOrException("GET",url=query,timeout=10)
             print("opened  '"+ query+"' succesfully!")
             #print(r.content)
             while True:
-                profiles=re.findall(r'''<a title="View profile" href="([/?\w\d;_=&%-]*)"><i class="fa fa-fw fa-user">''',r.text, re.M)
+                profiles = re.findall(r'''<a title="View profile" href="([/?\w\d;_=&%-]*)"><i class="fa fa-fw fa-user">''',r.text, re.M)
                 for profile in profiles:
                     name = re.search(r'^(/\w*)?', profile,re.I)
-                    rr=self.makeRequestOrException("GET",url=self.interpalsMainUrl+name.group(0),timeout=10)
+                    rr = self.makeRequestOrException("GET",url=self.interpalsMainUrl+name.group(0),timeout=10)
                     print(name.group(0))                    
                     if self.debugFlag:
                         with open("viewedUsers.txt",'a') as f:
                             f.write(self.interpalsMainUrl+name.group(0))
                             f.write("\n")
                 try:
-                    nextPage= re.search(r'''<a class="cur_page" href=["/?\w\d\s;_=&%-]*>\d+ </a>\s*<a href="(["/?\w\d\s;_=&%-]*)" offset="\d+">\d+ </a>''',r.text, re.M).group(1).replace("amp;", "")
+                    nextPage = re.search(r'''<a class="cur_page" href=["/?\w\d\s;_=&%-]*>\d+ </a>\s*<a href="(["/?\w\d\s;_=&%-]*)" offset="\d+">\d+ </a>''',r.text, re.M).group(1).replace("amp;", "")
                     if self.debugFlag:
                         print(self.interpalsMainUrl+nextPage)
                 except:
                     break
-                r=self.makeRequestOrException("GET",url=self.interpalsMainUrl+nextPage,timeout=10)         
+                r = self.makeRequestOrException("GET",url=self.interpalsMainUrl+nextPage,timeout=10)
         except requests.exceptions.RequestException as exception:
             print("[ERROR] - Exception occured %s "%exception )
 
 
-    def sendMessage(self,userName,msgContent="Hi! This is my Bot writing, how are you : )?"):
+    def sendMessage(self, userName, msgContent="Hi! This is my Bot writing, how are you : )?"):
         '''method taht allows you to send a message to a given user'''
         if not self.isLoggedIn():
             print("You are not logged on!")
             return
-        if len(userName)==0 or userName==None:
+        if len(userName) == 0 or userName == None:
             return
-        reqPostHeaders= {
+        reqPostHeaders = {
             'host':'www.interpals.net',
             'method':'POST',
             'path':'/pm.php',
@@ -467,20 +467,19 @@ class InterpalsBot():
             'message':msgContent
         }
         try:
-            r=self.makeRequestOrException("GET",url=self.interpalsMainUrl+"/"+userName,timeout=10)
-            
-            pmMsgUrl =re.findall(r'(pm.php[?]action=send&\w*=(\d*))',r.text, re.M)
-            #print(pmMsgUrl)
-            r=self.makeRequestOrException("GET",url=self.interpalsMainUrl+"/"+pmMsgUrl[0][0],timeout=10)
+            r = self.makeRequestOrException("GET",url=self.interpalsMainUrl+"/"+userName,timeout=10)
+            pmMsgUrl =re.findall(r'(pm.php\?action=send&.*uid=(\d*))',r.text, re.M)
+            r = self.makeRequestOrException("GET",url=self.interpalsMainUrl+"/"+"pm.php?action=send&uid=%s"%pmMsgUrl[0][1], timeout=10)
             if self.debugFlag:
                 with open("contentGET.txt",'wb') as f:
                     f.write(r.content)
-            threadId=re.findall(r'(name="send_thread_id"\s*value="(\d*)")',r.text, re.M)[0][1]
+            threadId = re.findall(r'(name="send_thread_id"\s*value="(\d*)")', r.text, re.M)[0][1]
             #print(threadId)
-            refUrl="https://www.interpals.net/pm.php?thread_id=%s"%threadId
+            refUrl = "https://www.interpals.net/pm.php?thread_id=%s"%threadId
             reqPostHeaders['referer']=refUrl
             formData['thread']=threadId
-            rPost=self.makeRequestOrException("POST",url=refUrl,**{'data':formData,'headers':reqPostHeaders})
+            rPost = self.makeRequestOrException("POST",url=refUrl,**{'data':formData,'headers':reqPostHeaders})
+            print("[SUCCESS] - Message: \"%s\" to user: userName has been sent correctly! "%msgContent)
         except requests.exceptions.RequestException as exception:
             print("[ERROR] - Exception occured %s "%exception )
 
@@ -490,7 +489,7 @@ class InterpalsBot():
         if not self.isLoggedIn():
             print("You are not logged on!")
             return
-        if len(userName)==0 or userName==None:
+        if len(userName) == 0 or userName == None:
             return
         reqPostHeaders= {
             'host':'www.interpals.net',
@@ -503,7 +502,7 @@ class InterpalsBot():
             'accept-language':'pl-PL;pl;q=0.8;en-US;q=0.6;en;q=0.4',
             'content-type':'application/x-www-form-urlencoded; charset=UTF-8',
             'origin':'https://www.interpals.net',
-            'referer':None,
+            'referer': None,
             'x-requested-with':'XMLHttpRequest',
             'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36'
         }
@@ -541,8 +540,8 @@ class InterpalsBot():
 if __name__ == '__main__':
     try:
         crawler  = InterpalsBot()
-        crawler.visitFilteredUsersProfile()
-        #crawler.sendMessage("UserName")
+        #crawler.visitFilteredUsersProfile()
+        crawler.sendMessage("lukasz6", "Best regards from PL!")
         #crawler.commentProfilePhoto("UserName")        
         print("--done--")
     except Exception as e:
