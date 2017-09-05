@@ -540,8 +540,8 @@ class InterpalsBot():
 if __name__ == '__main__':
     try:
         crawler  = InterpalsBot()
-        #crawler.visitFilteredUsersProfile()
-        crawler.sendMessage("lukasz6", "Best regards from PL!")
+        crawler.visitFilteredUsersProfile()
+        #crawler.sendMessage("UserName")
         #crawler.commentProfilePhoto("UserName")        
         print("--done--")
     except Exception as e:
